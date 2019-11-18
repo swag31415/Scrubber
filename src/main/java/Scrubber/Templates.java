@@ -1,7 +1,10 @@
 package Scrubber;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.function.Function;
 
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
@@ -28,4 +31,14 @@ public class Templates {
         return element.asText();
     };
 
+    public static final Function<HtmlPage, URL[]> GET_LINKS = p -> {
+        return p.querySelectorAll("a").stream().map(a -> {
+            try {
+                return p.getFullyQualifiedUrl(((HtmlAnchor) a).getAttribute("href"));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }).toArray(URL[]::new);
+    };
 }
